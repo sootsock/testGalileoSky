@@ -1,9 +1,4 @@
-import { FieldType, FieldValidation, FormField, FormValues } from "@/lib/types";
-
-export type ValidationError = {
-  fieldId: string;
-  message: string;
-};
+import { FormField, FormValues } from "@/lib/types";
 
 export function validateField(field: FormField, value: string): string | null {
   const v = field.validation;
@@ -59,7 +54,6 @@ export function validateField(field: FormField, value: string): string | null {
     const { required, min, max } = v.rules;
     if (required && trimmed === "") return `${field.label} is required`;
     if (trimmed === "") return null;
-    // Accept "YYYY-MM-DDTHH:mm" format from input[type=datetime-local]
     const date = new Date(trimmed);
     if (Number.isNaN(date.getTime())) return `${field.label} must be a datetime`;
     if (min) {

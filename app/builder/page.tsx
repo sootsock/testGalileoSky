@@ -158,10 +158,16 @@ export default function BuilderPage() {
 }
 
 function defaultValidation(type: FormField["type"]): FormField["validation"] {
-  if (type === "integer") return { type: "integer", rules: { required: false } };
-  if (type === "decimal") return { type: "decimal", rules: { required: false, decimalPlaces: 2 } };
-  if (type === "string") return { type: "string", rules: { required: false } };
-  return { type: "datetime", rules: { required: false } };
+  switch (type) {
+    case "string":
+      return {type: "string", rules: {required: false}};
+    case "integer":
+      return {type: "integer", rules: {required: false}};
+    case "decimal":
+      return {type: "decimal", rules: {required: false, decimalPlaces: 2}};
+    default:
+      return {type: "datetime", rules: {required: false}}
+  }
 }
 
 function cryptoRandomId(): string {

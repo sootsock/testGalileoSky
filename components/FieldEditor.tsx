@@ -3,13 +3,13 @@
 import { FormField } from "@/lib/types";
 import { useId } from "react";
 
-type Props = {
+type FieldEditorProps = {
   field: FormField;
   onChange: (field: FormField) => void;
   onRemove: () => void;
 };
 
-export default function FieldEditor({ field, onChange, onRemove }: Props) {
+export default function FieldEditor({ field, onChange, onRemove }: FieldEditorProps) {
   const uid = useId();
 
   return (

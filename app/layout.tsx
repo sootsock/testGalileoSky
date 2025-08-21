@@ -36,7 +36,7 @@ export default function RootLayout({
                 <nav className="flex items-center gap-3 text-sm">
                   <a className="hover:underline" href="/builder">Builder</a>
                   <a className="hover:underline" href="/fill">Fill</a>
-                  <a className="hover:underline" href="/watch">Watch</a>
+                  <a className="hover:underline" href="/watch">Check Schema</a>
                   <ThemeToggle />
                 </nav>
               </div>

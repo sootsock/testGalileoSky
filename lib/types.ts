@@ -22,8 +22,8 @@ export type StringValidation = {
 
 export type DatetimeValidation = {
   required?: boolean;
-  min?: string; // ISO string (e.g., 2025-01-01T00:00)
-  max?: string; // ISO string
+  min?: string;
+  max?: string;
 };
 
 export type FieldValidation =

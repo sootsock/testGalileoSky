@@ -17,20 +17,20 @@ export default function FillPage() {
   const toast = useToast();
 
   useEffect(() => {
-    const s = loadSchema();
-    setSchema(s);
-    if (s) {
-      const result = validateSchema(s);
+    const loadedSchema = loadSchema();
+    if (loadedSchema) {
+      const result = validateSchema(loadedSchema);
       if (!result.valid) {
         setSchemaError(`Invalid saved schema: ${result.errors[0]}`);
         toast.error("Invalid saved schema");
         return;
       }
       const initial: FormValues = {};
-      s.fields.forEach((f) => (initial[f.id] = ""));
+      loadedSchema.fields.forEach((f) => (initial[f.id] = ""));
       setValues(initial);
       setSchemaError(null);
     }
+    setSchema(loadedSchema);
   }, []);
 
   if (!schema) {

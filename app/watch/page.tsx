@@ -59,7 +59,7 @@ export default function WatchPage() {
   return (
     <div className="space-y-6">
       <div className="flex items-center justify-between">
-        <h1 className="text-xl font-semibold">Watch Form</h1>
+        <h1 className="text-xl font-semibold">Check Schema Form</h1>
         <div className="flex gap-2">
           <button className="border rounded px-3 py-1" onClick={onUploadClick}>Upload Schema</button>
           <input ref={fileInputRef} type="file" accept="application/json" className="hidden" onChange={onFileSelected} />
