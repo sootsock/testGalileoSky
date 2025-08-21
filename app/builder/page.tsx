@@ -1,6 +1,6 @@
 "use client";
 
-import { useEffect, useMemo, useRef, useState } from "react";
+import { useEffect, useMemo, useRef, useState, ChangeEventHandler } from "react";
 import { FormField, FormSchema } from "@/lib/types";
 import FieldEditor from "@/components/FieldEditor";
 import { loadSchema, saveSchema } from "@/lib/storage";
@@ -11,8 +11,13 @@ export default function BuilderPage() {
   const [schema, setSchema] = useState<FormSchema>(() => ({ id: cryptoRandomId(), title: "My Form", fields: [], version: 1 }));
   const [message, setMessage] = useState<string | null>(null);
   const [error, setError] = useState<string | null>(null);
+  const [mounted, setMounted] = useState(false);
   const fileInputRef = useRef<HTMLInputElement | null>(null);
   const toast = useToast();
+
+  useEffect(() => {
+    setMounted(true);
+  }, []);
 
   useEffect(() => {
     const loaded = loadSchema();
@@ -84,7 +89,7 @@ export default function BuilderPage() {
     fileInputRef.current?.click();
   };
 
-  const onFileSelected: React.ChangeEventHandler<HTMLInputElement> = async (e) => {
+  const onFileSelected: ChangeEventHandler<HTMLInputElement> = async (e) => {
     const file = e.target.files?.[0];
     e.currentTarget.value = "";
     if (!file) return;
@@ -152,7 +157,11 @@ export default function BuilderPage() {
 
       <section className="space-y-2">
         <h2 className="font-medium">Schema JSON</h2>
-        <pre className="text-sm bg-black/5 dark:bg-white/5 p-3 rounded overflow-x-auto"><code>{exportJson}</code></pre>
+        {mounted ? (
+          <pre className="text-sm bg-black/5 dark:bg-white/5 p-3 rounded overflow-x-auto"><code>{exportJson}</code></pre>
+        ) : (
+          <pre className="text-sm bg-black/5 dark:bg-white/5 p-3 rounded overflow-x-auto"><code>{"{\n  \"id\": \"loading...\",\n  \"title\": \"My Form\",\n  \"fields\": [],\n  \"version\": 1\n}"}</code></pre>
+        )}
       </section>
     </div>
   );
