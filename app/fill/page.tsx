@@ -6,6 +6,7 @@ import { loadSchema } from "@/lib/storage";
 import DynamicField from "@/components/DynamicField";
 import { validateAll } from "@/lib/validation";
 import { validateSchema } from "@/lib/schema";
+import { useToast } from "@/components/ToastProvider";
 
 export default function FillPage() {
   const [schema, setSchema] = useState<FormSchema | null>(null);
@@ -13,6 +14,7 @@ export default function FillPage() {
   const [submitted, setSubmitted] = useState<FormValues | null>(null);
   const [errors, setErrors] = useState<Record<string, string>>({});
   const [schemaError, setSchemaError] = useState<string | null>(null);
+  const toast = useToast();
 
   useEffect(() => {
     const s = loadSchema();
@@ -21,6 +23,7 @@ export default function FillPage() {
       const result = validateSchema(s);
       if (!result.valid) {
         setSchemaError(`Invalid saved schema: ${result.errors[0]}`);
+        toast.error("Invalid saved schema");
         return;
       }
       const initial: FormValues = {};
@@ -42,7 +45,12 @@ export default function FillPage() {
   const submit = () => {
     const e = validateAll(schema.fields, values);
     setErrors(e);
-    if (Object.keys(e).length === 0) setSubmitted(values);
+    if (Object.keys(e).length === 0) {
+      setSubmitted(values);
+      toast.success("Form submitted");
+    } else {
+      toast.error("Please fix validation errors");
+    }
   };
 
   const result = useMemo(() => (submitted ? JSON.stringify(submitted, null, 2) : null), [submitted]);

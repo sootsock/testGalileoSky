@@ -5,12 +5,14 @@ import { FormField, FormSchema } from "@/lib/types";
 import FieldEditor from "@/components/FieldEditor";
 import { loadSchema, saveSchema } from "@/lib/storage";
 import { validateSchema } from "@/lib/schema";
+import { useToast } from "@/components/ToastProvider";
 
 export default function BuilderPage() {
   const [schema, setSchema] = useState<FormSchema>(() => ({ id: cryptoRandomId(), title: "My Form", fields: [], version: 1 }));
   const [message, setMessage] = useState<string | null>(null);
   const [error, setError] = useState<string | null>(null);
   const fileInputRef = useRef<HTMLInputElement | null>(null);
+  const toast = useToast();
 
   useEffect(() => {
     const loaded = loadSchema();
@@ -41,11 +43,13 @@ export default function BuilderPage() {
     saveSchema(schema);
     setMessage("Schema saved to localStorage");
     setError(null);
+    toast.success("Schema saved");
   };
 
   const onLoad = () => {
     const loaded = loadSchema();
     if (loaded) setSchema(loaded);
+    toast.info("Schema loaded from LocalStorage");
   };
 
   const onDownload = () => {
@@ -60,6 +64,7 @@ export default function BuilderPage() {
     a.click();
     a.remove();
     URL.revokeObjectURL(url);
+    toast.info("Schema downloaded");
   };
 
   const onUploadClick = () => {
@@ -77,14 +82,17 @@ export default function BuilderPage() {
       if (!result.valid) {
         setError(`Invalid schema: ${result.errors[0]}`);
         setMessage(null);
+        toast.error("Invalid schema file");
         return;
       }
       setSchema(parsed as FormSchema);
       setMessage("Schema loaded from file");
       setError(null);
+      toast.success("Schema uploaded");
     } catch (err: any) {
       setError("Failed to load schema file. Ensure it is valid JSON.");
       setMessage(null);
+      toast.error("Failed to load schema file");
     }
   };
 
