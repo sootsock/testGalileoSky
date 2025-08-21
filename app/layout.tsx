@@ -33,6 +33,7 @@ export default function RootLayout({
               <nav className="flex gap-4 text-sm">
                 <a className="hover:underline" href="/builder">Builder</a>
                 <a className="hover:underline" href="/fill">Fill</a>
+                <a className="hover:underline" href="/watch">Watch</a>
               </nav>
             </div>
           </header>
