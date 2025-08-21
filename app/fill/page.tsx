@@ -31,13 +31,21 @@ export default function FillPage() {
       setSchemaError(null);
     }
     setSchema(loadedSchema);
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
+
+  const result = useMemo(
+    () => (submitted ? JSON.stringify(submitted, null, 2) : null),
+    [submitted],
+  );
 
   if (!schema) {
     return (
       <div className="space-y-4">
         <h1 className="text-xl font-semibold">Fill Form</h1>
-        <p className="text-sm text-black/60 dark:text-white/60">No saved schema. Go to Builder to create and save one.</p>
+        <p className="text-sm text-black/60 dark:text-white/60">
+          No saved schema. Go to Builder to create and save one.
+        </p>
       </div>
     );
   }
@@ -53,38 +61,51 @@ export default function FillPage() {
     }
   };
 
-  const result = useMemo(() => (submitted ? JSON.stringify(submitted, null, 2) : null), [submitted]);
-
   return (
     <div className="space-y-6">
       <h1 className="text-xl font-semibold">{schema.title}</h1>
 
-      {schemaError && (
-        <div className="text-red-600 text-sm">{schemaError}</div>
-      )}
+      {schemaError && <div className="text-red-600 text-sm">{schemaError}</div>}
 
       <div className="space-y-4">
         {schema.fields.length === 0 && (
           <p className="text-sm text-black/60 dark:text-white/60">No fields in schema.</p>
         )}
         {schema.fields.map((f) => (
-          <DynamicField key={f.id} field={f} value={values[f.id] ?? ""} error={errors[f.id]} onChange={(v) => setValues((s) => ({ ...s, [f.id]: v }))} />
+          <DynamicField
+            key={f.id}
+            field={f}
+            value={values[f.id] ?? ""}
+            error={errors[f.id]}
+            onChange={(v) => setValues((s) => ({ ...s, [f.id]: v }))}
+          />
         ))}
       </div>
 
       <div className="flex gap-2">
-        <button className="border rounded px-3 py-1" onClick={submit}>Submit</button>
-        <button className="border rounded px-3 py-1" onClick={() => { setValues({}); setErrors({}); setSubmitted(null); }}>Reset</button>
+        <button className="border rounded px-3 py-1" onClick={submit}>
+          Submit
+        </button>
+        <button
+          className="border rounded px-3 py-1"
+          onClick={() => {
+            setValues({});
+            setErrors({});
+            setSubmitted(null);
+          }}
+        >
+          Reset
+        </button>
       </div>
 
       {result && (
         <section className="space-y-2">
           <h2 className="font-medium">Submitted JSON</h2>
-          <pre className="text-sm bg-black/5 dark:bg-white/5 p-3 rounded overflow-x-auto"><code>{result}</code></pre>
+          <pre className="text-sm bg-black/5 dark:bg-white/5 p-3 rounded overflow-x-auto">
+            <code>{result}</code>
+          </pre>
         </section>
       )}
     </div>
   );
 }
-
-

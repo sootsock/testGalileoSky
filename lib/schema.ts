@@ -12,7 +12,8 @@ export function validateSchema(schema: unknown): SchemaValidationResult {
   }
   const loadedSchema = schema as Partial<FormSchema> & Record<string, unknown>;
 
-  if (!loadedSchema.title || typeof loadedSchema.title !== "string") errors.push("title must be a non-empty string");
+  if (!loadedSchema.title || typeof loadedSchema.title !== "string")
+    errors.push("title must be a non-empty string");
 
   if (!Array.isArray(loadedSchema.fields)) errors.push("fields must be an array");
 
@@ -34,20 +35,25 @@ export function validateSchema(schema: unknown): SchemaValidationResult {
 
       if (!field.id || typeof field.id !== "string") errors.push(`${path}.id must be a string`);
 
-      if (!field.name || typeof field.name !== "string") errors.push(`${path}.name must be a non-empty string`);
+      if (!field.name || typeof field.name !== "string")
+        errors.push(`${path}.name must be a non-empty string`);
 
-      if (!field.label || typeof field.label !== "string") errors.push(`${path}.label must be a string`);
+      if (!field.label || typeof field.label !== "string")
+        errors.push(`${path}.label must be a string`);
 
-      if (!isFieldType(field.type)) errors.push(`${path}.type must be one of integer|decimal|string|datetime`);
+      if (!isFieldType(field.type))
+        errors.push(`${path}.type must be one of integer|decimal|string|datetime`);
 
       if (!field.validation || typeof field.validation !== "object") {
         errors.push(`${path}.validation must be an object`);
       } else {
+        // eslint-disable-next-line @typescript-eslint/no-explicit-any
         const v = field.validation as any;
 
         if (!isFieldType(v.type)) errors.push(`${path}.validation.type must match a valid type`);
 
-        if (field.type && v.type && field.type !== v.type) errors.push(`${path}.validation.type must equal field.type`);
+        if (field.type && v.type && field.type !== v.type)
+          errors.push(`${path}.validation.type must equal field.type`);
 
         const rules = v.rules ?? {};
 
@@ -57,35 +63,57 @@ export function validateSchema(schema: unknown): SchemaValidationResult {
           checkNumberIfDefined(rules.min, `${path}.validation.rules.min`, errors);
           checkNumberIfDefined(rules.max, `${path}.validation.rules.max`, errors);
           checkBooleanIfDefined(rules.required, `${path}.validation.rules.required`, errors);
-          if (isNumber(rules.min) && isNumber(rules.max) && rules.min > rules.max) errors.push(`${path}.min must be <= max`);
+          if (isNumber(rules.min) && isNumber(rules.max) && rules.min > rules.max)
+            errors.push(`${path}.min must be <= max`);
         } else if (v.type === "decimal") {
           checkNumberIfDefined(rules.min, `${path}.validation.rules.min`, errors);
           checkNumberIfDefined(rules.max, `${path}.validation.rules.max`, errors);
           checkBooleanIfDefined(rules.required, `${path}.validation.rules.required`, errors);
 
-          if (isNumber(rules.min) && isNumber(rules.max) && rules.min > rules.max) errors.push(`${path}.min must be <= max`);
+          if (isNumber(rules.min) && isNumber(rules.max) && rules.min > rules.max)
+            errors.push(`${path}.min must be <= max`);
 
-          if (rules.decimalPlaces !== undefined && (!Number.isInteger(rules.decimalPlaces) || rules.decimalPlaces < 0)) {
+          if (
+            rules.decimalPlaces !== undefined &&
+            (!Number.isInteger(rules.decimalPlaces) || rules.decimalPlaces < 0)
+          ) {
             errors.push(`${path}.validation.rules.decimalPlaces must be a non-negative integer`);
           }
         } else if (v.type === "string") {
           checkBooleanIfDefined(rules.required, `${path}.validation.rules.required`, errors);
-          if (rules.minLength !== undefined && (!Number.isInteger(rules.minLength) || rules.minLength < 0)) errors.push(`${path}.validation.rules.minLength must be a non-negative integer`);
+          if (
+            rules.minLength !== undefined &&
+            (!Number.isInteger(rules.minLength) || rules.minLength < 0)
+          )
+            errors.push(`${path}.validation.rules.minLength must be a non-negative integer`);
 
-          if (rules.maxLength !== undefined && (!Number.isInteger(rules.maxLength) || rules.maxLength < 0)) errors.push(`${path}.validation.rules.maxLength must be a non-negative integer`);
+          if (
+            rules.maxLength !== undefined &&
+            (!Number.isInteger(rules.maxLength) || rules.maxLength < 0)
+          )
+            errors.push(`${path}.validation.rules.maxLength must be a non-negative integer`);
 
-          if (isNumber(rules.minLength) && isNumber(rules.maxLength) && rules.minLength > rules.maxLength) errors.push(`${path}.minLength must be <= maxLength`);
+          if (
+            isNumber(rules.minLength) &&
+            isNumber(rules.maxLength) &&
+            rules.minLength > rules.maxLength
+          )
+            errors.push(`${path}.minLength must be <= maxLength`);
 
-          if (rules.pattern !== undefined && typeof rules.pattern !== "string") errors.push(`${path}.validation.rules.pattern must be a string`);
+          if (rules.pattern !== undefined && typeof rules.pattern !== "string")
+            errors.push(`${path}.validation.rules.pattern must be a string`);
         } else if (v.type === "datetime") {
           checkBooleanIfDefined(rules.required, `${path}.validation.rules.required`, errors);
 
-          if (rules.min !== undefined && typeof rules.min !== "string") errors.push(`${path}.validation.rules.min must be an ISO datetime string`);
+          if (rules.min !== undefined && typeof rules.min !== "string")
+            errors.push(`${path}.validation.rules.min must be an ISO datetime string`);
 
-          if (rules.max !== undefined && typeof rules.max !== "string") errors.push(`${path}.validation.rules.max must be an ISO datetime string`);
+          if (rules.max !== undefined && typeof rules.max !== "string")
+            errors.push(`${path}.validation.rules.max must be an ISO datetime string`);
 
           if (typeof rules.min === "string" && typeof rules.max === "string") {
-            if (new Date(rules.min) > new Date(rules.max)) errors.push(`${path}.min must be <= max`);
+            if (new Date(rules.min) > new Date(rules.max))
+              errors.push(`${path}.min must be <= max`);
           }
         }
       }
@@ -94,7 +122,10 @@ export function validateSchema(schema: unknown): SchemaValidationResult {
         fieldIds.add(field.id);
       }
       if (field.name && typeof field.name === "string") {
-        if (!/^[A-Za-z_][A-Za-z0-9_]*$/.test(field.name)) errors.push(`${path}.name must be alphanumeric with underscores, not starting with digit`);
+        if (!/^[A-Za-z_][A-Za-z0-9_]*$/.test(field.name))
+          errors.push(
+            `${path}.name must be alphanumeric with underscores, not starting with digit`,
+          );
         if (fieldNames.has(field.name)) errors.push(`${path}.name must be unique`);
         fieldNames.add(field.name);
       }
@@ -108,22 +139,20 @@ export function isSchemaValid(schema: unknown): schema is FormSchema {
   return validateSchema(schema).valid;
 }
 
-function isFieldType(t: any): t is FieldType {
+function isFieldType(t: unknown): t is FieldType {
   return t === "integer" || t === "decimal" || t === "string" || t === "datetime";
 }
 
-function isNumber(n: any): n is number {
+function isNumber(n: unknown): n is number {
   return typeof n === "number" && !Number.isNaN(n);
 }
 
-function checkNumberIfDefined(n: any, path: string, errors: string[]) {
+function checkNumberIfDefined(n: unknown, path: string, errors: string[]) {
   if (n === undefined) return;
   if (!isNumber(n)) errors.push(`${path} must be a number`);
 }
 
-function checkBooleanIfDefined(b: any, path: string, errors: string[]) {
+function checkBooleanIfDefined(b: unknown, path: string, errors: string[]) {
   if (b === undefined) return;
   if (typeof b !== "boolean") errors.push(`${path} must be a boolean`);
 }
-
-

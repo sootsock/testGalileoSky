@@ -102,9 +102,10 @@ export default function BuilderPage() {
       setMessage("Schema loaded from file");
       setError(null);
       toast.success("Schema uploaded");
-    } catch (err: any) {
+    } catch (err) {
       setError("Failed to load schema file. Ensure it is valid JSON.");
       setMessage(null);
+      console.error(err);
       toast.error("Failed to load schema file");
     }
   };

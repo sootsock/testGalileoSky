@@ -6,7 +6,6 @@ export default function Home() {
       <div className="flex gap-3">
         <a className="border rounded px-3 py-2" href="/builder">Go to Builder</a>
           <a className="border rounded px-3 py-2" href="/watch">Go to Schema Testing</a>
-        <a className="border rounded px-3 py-2" href="/fill">Go to Fill</a>
       </div>
     </div>
   );
