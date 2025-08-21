@@ -1,6 +1,6 @@
 "use client";
 
-import { useMemo, useRef, useState } from "react";
+import { useMemo, useRef, useState, ChangeEventHandler } from "react";
 import { FormSchema, FormValues } from "@/lib/types";
 import { validateSchema } from "@/lib/schema";
 import DynamicField from "@/components/DynamicField";
@@ -17,7 +17,7 @@ export default function WatchPage() {
 
   const onUploadClick = () => fileInputRef.current?.click();
 
-  const onFileSelected: React.ChangeEventHandler<HTMLInputElement> = async (e) => {
+  const onFileSelected: ChangeEventHandler<HTMLInputElement> = async (e) => {
     const file = e.target.files?.[0];
     e.currentTarget.value = "";
     if (!file) return;
@@ -29,10 +29,10 @@ export default function WatchPage() {
         toast.error("Invalid schema file");
         return;
       }
-      const s = parsed as FormSchema;
-      setSchema(s);
+      const parsedSchema = parsed as FormSchema;
+      setSchema(parsedSchema);
       const initial: FormValues = {};
-      s.fields.forEach((f) => (initial[f.id] = ""));
+      parsedSchema.fields.forEach((field) => (initial[field.id] = ""));
       setValues(initial);
       setErrors({});
       setSubmitted(null);
@@ -44,9 +44,9 @@ export default function WatchPage() {
 
   const submit = () => {
     if (!schema) return;
-    const e = validateAll(schema.fields, values);
-    setErrors(e);
-    if (Object.keys(e).length === 0) {
+    const error = validateAll(schema.fields, values);
+    setErrors(error);
+    if (Object.keys(error).length === 0) {
       setSubmitted(values);
       toast.success("Form valid");
     } else {
@@ -80,14 +80,14 @@ export default function WatchPage() {
             {schema.fields.length === 0 && (
               <p className="text-sm text-black/60 dark:text-white/60">No fields in schema.</p>
             )}
-            {schema.fields.map((f) => (
+            {schema.fields.map((field) => (
               <DynamicField
-                key={f.id}
-                field={f}
-                value={values[f.id] ?? ""}
-                error={errors[f.id]}
+                key={field.id}
+                field={field}
+                value={values[field.id] ?? ""}
+                error={errors[field.id]}
                 onChange={(v) => {
-                  setValues((s) => ({ ...s, [f.id]: v }));
+                  setValues((s) => ({ ...s, [field.id]: v }));
                 }}
               />
             ))}
