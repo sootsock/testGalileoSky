@@ -5,20 +5,28 @@ import { FormSchema, FormValues } from "@/lib/types";
 import { loadSchema } from "@/lib/storage";
 import DynamicField from "@/components/DynamicField";
 import { validateAll } from "@/lib/validation";
+import { validateSchema } from "@/lib/schema";
 
 export default function FillPage() {
   const [schema, setSchema] = useState<FormSchema | null>(null);
   const [values, setValues] = useState<FormValues>({});
   const [submitted, setSubmitted] = useState<FormValues | null>(null);
   const [errors, setErrors] = useState<Record<string, string>>({});
+  const [schemaError, setSchemaError] = useState<string | null>(null);
 
   useEffect(() => {
     const s = loadSchema();
     setSchema(s);
     if (s) {
+      const result = validateSchema(s);
+      if (!result.valid) {
+        setSchemaError(`Invalid saved schema: ${result.errors[0]}`);
+        return;
+      }
       const initial: FormValues = {};
       s.fields.forEach((f) => (initial[f.id] = ""));
       setValues(initial);
+      setSchemaError(null);
     }
   }, []);
 
@@ -42,6 +50,10 @@ export default function FillPage() {
   return (
     <div className="space-y-6">
       <h1 className="text-xl font-semibold">{schema.title}</h1>
+
+      {schemaError && (
+        <div className="text-red-600 text-sm">{schemaError}</div>
+      )}
 
       <div className="space-y-4">
         {schema.fields.length === 0 && (

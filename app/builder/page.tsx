@@ -1,12 +1,16 @@
 "use client";
 
-import { useEffect, useMemo, useState } from "react";
+import { useEffect, useMemo, useRef, useState } from "react";
 import { FormField, FormSchema } from "@/lib/types";
 import FieldEditor from "@/components/FieldEditor";
 import { loadSchema, saveSchema } from "@/lib/storage";
+import { validateSchema } from "@/lib/schema";
 
 export default function BuilderPage() {
   const [schema, setSchema] = useState<FormSchema>(() => ({ id: cryptoRandomId(), title: "My Form", fields: [], version: 1 }));
+  const [message, setMessage] = useState<string | null>(null);
+  const [error, setError] = useState<string | null>(null);
+  const fileInputRef = useRef<HTMLInputElement | null>(null);
 
   useEffect(() => {
     const loaded = loadSchema();
@@ -35,12 +39,53 @@ export default function BuilderPage() {
 
   const onSave = () => {
     saveSchema(schema);
-    alert("Schema saved to localStorage");
+    setMessage("Schema saved to localStorage");
+    setError(null);
   };
 
   const onLoad = () => {
     const loaded = loadSchema();
     if (loaded) setSchema(loaded);
+  };
+
+  const onDownload = () => {
+    const json = JSON.stringify(schema, null, 2);
+    const blob = new Blob([json], { type: "application/json" });
+    const url = URL.createObjectURL(blob);
+    const a = document.createElement("a");
+    a.href = url;
+    const safeTitle = schema.title.replace(/[^A-Za-z0-9_-]+/g, "_");
+    a.download = `${safeTitle || "form"}_${schema.id}.json`;
+    document.body.appendChild(a);
+    a.click();
+    a.remove();
+    URL.revokeObjectURL(url);
+  };
+
+  const onUploadClick = () => {
+    fileInputRef.current?.click();
+  };
+
+  const onFileSelected: React.ChangeEventHandler<HTMLInputElement> = async (e) => {
+    const file = e.target.files?.[0];
+    e.currentTarget.value = "";
+    if (!file) return;
+    try {
+      const text = await file.text();
+      const parsed = JSON.parse(text);
+      const result = validateSchema(parsed);
+      if (!result.valid) {
+        setError(`Invalid schema: ${result.errors[0]}`);
+        setMessage(null);
+        return;
+      }
+      setSchema(parsed as FormSchema);
+      setMessage("Schema loaded from file");
+      setError(null);
+    } catch (err: any) {
+      setError("Failed to load schema file. Ensure it is valid JSON.");
+      setMessage(null);
+    }
   };
 
   const exportJson = useMemo(() => JSON.stringify(schema, null, 2), [schema]);
@@ -64,8 +109,17 @@ export default function BuilderPage() {
           />
           <button className="border rounded px-3 py-1" onClick={onLoad}>Load</button>
           <button className="border rounded px-3 py-1" onClick={onSave}>Save</button>
+          <button className="border rounded px-3 py-1" onClick={onDownload}>Download</button>
+          <button className="border rounded px-3 py-1" onClick={onUploadClick}>Upload</button>
+          <input ref={fileInputRef} type="file" accept="application/json" className="hidden" onChange={onFileSelected} />
         </div>
       </div>
+
+      {(message || error) && (
+        <div className={`${error ? "text-red-600" : "text-green-700"} text-sm`}>
+          {error || message}
+        </div>
+      )}
 
       <div className="space-y-3">
         {schema.fields.length === 0 && (
@@ -95,5 +149,6 @@ function cryptoRandomId(): string {
   if (typeof crypto !== "undefined" && "randomUUID" in crypto) return crypto.randomUUID();
   return Math.random().toString(36).slice(2);
 }
+
 
 
