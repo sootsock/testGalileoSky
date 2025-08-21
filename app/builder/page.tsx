@@ -148,7 +148,7 @@ export default function BuilderPage() {
 
       <div className="space-y-3">
         {schema.fields.length === 0 && (
-          <p className="text-sm text-black/60 dark:text-white/60">No fields yet. Add one above.</p>
+          <p className="text-sm">No fields yet. Add one above.</p>
         )}
         {schema.fields.map((f) => (
           <FieldEditor key={f.id} field={f} onChange={(ff) => updateField(f.id, ff)} onRemove={() => removeField(f.id)} />

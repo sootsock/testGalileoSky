@@ -70,7 +70,7 @@ export default function WatchPage() {
       </div>
 
       {!schema && (
-        <p className="text-sm text-black/60 dark:text-white/60">Upload a schema JSON to render and test the form here.</p>
+        <p className="text-sm">Upload a schema JSON to render and test the form here.</p>
       )}
 
       {schema && (
@@ -78,7 +78,7 @@ export default function WatchPage() {
           <h2 className="font-medium">{schema.title}</h2>
           <div className="space-y-4">
             {schema.fields.length === 0 && (
-              <p className="text-sm text-black/60 dark:text-white/60">No fields in schema.</p>
+              <p className="text-sm">No fields in schema.</p>
             )}
             {schema.fields.map((field) => (
               <DynamicField
