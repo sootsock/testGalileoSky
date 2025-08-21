@@ -48,7 +48,7 @@ export default function WatchPage() {
     setErrors(error);
     if (Object.keys(error).length === 0) {
       setSubmitted(values);
-      toast.success("Form valid");
+      toast.success("Form submitted successfully");
     } else {
       toast.error("Please fix validation errors");
     }
@@ -93,13 +93,13 @@ export default function WatchPage() {
             ))}
           </div>
           <div className="flex gap-2">
-            <button className="border rounded px-3 py-1" onClick={submit}>Validate</button>
+            <button className="border rounded px-3 py-1" onClick={submit}>Submit</button>
             <button className="border rounded px-3 py-1" onClick={() => { setValues({}); setErrors({}); setSubmitted(null); }}>Reset</button>
           </div>
 
           {result && (
             <section className="space-y-2">
-              <h3 className="font-medium">Values JSON</h3>
+              <h3 className="font-medium">Submission Result (JSON)</h3>
               <pre className="text-sm bg-black/5 dark:bg-white/5 p-3 rounded overflow-x-auto"><code>{result}</code></pre>
             </section>
           )}
