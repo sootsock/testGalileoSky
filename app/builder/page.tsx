@@ -46,12 +46,6 @@ export default function BuilderPage() {
     toast.success("Schema saved");
   };
 
-  const onLoad = () => {
-    const loaded = loadSchema();
-    if (loaded) setSchema(loaded);
-    toast.info("Schema loaded from LocalStorage");
-  };
-
   const onDownload = () => {
     const json = JSON.stringify(schema, null, 2);
     const blob = new Blob([json], { type: "application/json" });
@@ -65,6 +59,25 @@ export default function BuilderPage() {
     a.remove();
     URL.revokeObjectURL(url);
     toast.info("Schema downloaded");
+  };
+
+  const clearUI = () => {
+    setSchema({ id: cryptoRandomId(), title: "My Form", fields: [], version: 1 });
+    setMessage(null);
+    setError(null);
+  };
+
+  const onClear = () => {
+    const ok = window.confirm("Are you sure you want to clear the current schema? Unsaved changes will be lost.");
+    if (!ok) return;
+    clearUI();
+    toast.info("Schema cleared");
+  };
+
+  const onDownloadAndClear = () => {
+    onDownload();
+    clearUI();
+    toast.success("Downloaded and cleared");
   };
 
   const onUploadClick = () => {
@@ -103,10 +116,7 @@ export default function BuilderPage() {
       <h1 className="text-xl font-semibold">Form Builder</h1>
       <div className="grid gap-3 sm:grid-cols-2">
         <div className="flex gap-2">
-          <button className="border rounded px-3 py-1" onClick={() => addField("string")}>Add string</button>
-          <button className="border rounded px-3 py-1" onClick={() => addField("integer")}>Add integer</button>
-          <button className="border rounded px-3 py-1" onClick={() => addField("decimal")}>Add decimal</button>
-          <button className="border rounded px-3 py-1" onClick={() => addField("datetime")}>Add datetime</button>
+          <button className="border rounded px-3 py-1" onClick={() => addField("string")}>Add field</button>
         </div>
         <div className="flex gap-2 sm:justify-end">
           <input
@@ -115,10 +125,11 @@ export default function BuilderPage() {
             onChange={(e) => setSchema((s) => ({ ...s, title: e.target.value }))}
             placeholder="Form title"
           />
-          <button className="border rounded px-3 py-1" onClick={onLoad}>Load</button>
           <button className="border rounded px-3 py-1" onClick={onSave}>Save</button>
           <button className="border rounded px-3 py-1" onClick={onDownload}>Download</button>
+          <button className="border rounded px-3 py-1" onClick={onDownloadAndClear}>Download & Clear</button>
           <button className="border rounded px-3 py-1" onClick={onUploadClick}>Upload</button>
+          <button className="border rounded px-3 py-1" onClick={onClear}>Clear</button>
           <input ref={fileInputRef} type="file" accept="application/json" className="hidden" onChange={onFileSelected} />
         </div>
       </div>
