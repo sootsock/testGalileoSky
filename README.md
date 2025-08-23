@@ -22,6 +22,7 @@ A dynamic form builder application built with Next.js App Router, TypeScript, an
 
 ### Features
 - **Form Builder**: Add/edit/remove fields (integer, decimal, string, datetime)
+- **Field Ordering**: Rank-based field ordering for custom form layouts
 - **Configurable Validations**: Per field type with customizable rules
 - **Schema Management**: Save/load to LocalStorage, download as JSON file, upload from file with validation
 - **Form Filling**: Render forms from saved schemas with real-time validation
@@ -41,6 +42,7 @@ A dynamic form builder application built with Next.js App Router, TypeScript, an
 ### Usage
 - **Builder** (`/builder`): Configure your form
   - Add fields of different types with validation rules
+  - Set field order using the rank field (lower numbers appear first)
   - Save/load schemas to LocalStorage
   - Download schema as JSON file
   - Upload schema from file (with validation)
@@ -48,7 +50,7 @@ A dynamic form builder application built with Next.js App Router, TypeScript, an
   - Download & Clear in one action
 - **Check Schema** (`/watch`): Test uploaded schemas
   - Upload any schema file
-  - Interactive form testing
+  - Interactive form testing with fields ordered by rank
   - Live validation feedback
 
 ### Schema Structure
@@ -67,8 +69,17 @@ interface FormField {
   label: string;
   type: "string" | "integer" | "decimal" | "datetime";
   validation: ValidationRules;
+  rank: number; // Field order (lower numbers appear first)
 }
 ```
+
+### Field Ordering
+Fields are displayed in order based on their `rank` value:
+- **Lower rank values** appear **first** in the form
+- **Higher rank values** appear **later** in the form
+- Fields with the same rank maintain their original order
+- New fields automatically get sequential rank values (0, 1, 2, etc.)
+- You can manually edit rank values to customize field order
 
 ---
 
@@ -88,6 +99,7 @@ interface FormField {
 
 ### Возможности
 - **Конструктор форм**: Добавление/редактирование/удаление полей (integer, decimal, string, datetime)
+- **Упорядочивание полей**: Сортировка полей по рангу для настройки порядка отображения
 - **Настраиваемые валидации**: Для каждого типа поля с настраиваемыми правилами
 - **Управление схемами**: Сохранение/загрузка в LocalStorage, скачивание как JSON файл, загрузка из файла с валидацией
 - **Заполнение форм**: Рендеринг форм из сохраненных схем с валидацией в реальном времени
@@ -107,6 +119,7 @@ interface FormField {
 ### Использование
 - **Builder** (`/builder`): Настройка вашей формы
   - Добавление полей разных типов с правилами валидации
+  - Настройка порядка полей с помощью поля rank (меньшие числа отображаются первыми)
   - Сохранение/загрузка схем в LocalStorage
   - Скачивание схемы как JSON файл
   - Загрузка схемы из файла (с валидацией)
@@ -114,7 +127,7 @@ interface FormField {
   - Скачивание и очистка одним действием
 - **Check Schema** (`/watch`): Тестирование загруженных схем
   - Загрузка любой схемы из файла
-  - Интерактивное тестирование формы
+  - Интерактивное тестирование формы с полями, упорядоченными по рангу
   - Живая обратная связь по валидации
 
 ### Структура схемы
@@ -133,5 +146,14 @@ interface FormField {
   label: string;
   type: "string" | "integer" | "decimal" | "datetime";
   validation: ValidationRules;
+  rank: number; // Порядок поля (меньшие числа отображаются первыми)
 }
 ```
+
+### Упорядочивание полей
+Поля отображаются в порядке, основанном на значении `rank`:
+- **Меньшие значения ранга** отображаются **первыми** в форме
+- **Большие значения ранга** отображаются **позже** в форме
+- Поля с одинаковым рангом сохраняют свой исходный порядок
+- Новые поля автоматически получают последовательные значения ранга (0, 1, 2, и т.д.)
+- Вы можете вручную редактировать значения ранга для настройки порядка полей
