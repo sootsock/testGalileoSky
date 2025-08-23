@@ -3,11 +3,11 @@
 import { useMemo, useRef, useState, ChangeEventHandler } from "react";
 import { FormSchema, FormValues } from "@/lib/types";
 import { validateSchema } from "@/lib/schema";
-import DynamicField from "@/components/DynamicField";
+import { DynamicField, useToast, useLanguage } from "@/components";
 import { validateAll } from "@/lib/validation";
-import { useToast } from "@/components/ToastProvider";
 
 export default function WatchPage() {
+  const { t } = useLanguage();
   const [schema, setSchema] = useState<FormSchema | null>(null);
   const [values, setValues] = useState<FormValues>({});
   const [errors, setErrors] = useState<Record<string, string>>({});
@@ -26,7 +26,7 @@ export default function WatchPage() {
       const parsed = JSON.parse(text);
       const result = validateSchema(parsed);
       if (!result.valid) {
-        toast.error("Invalid schema file");
+        toast.error(t('invalidSchema'));
         return;
       }
       const parsedSchema = parsed as FormSchema;
@@ -36,9 +36,9 @@ export default function WatchPage() {
       setValues(initial);
       setErrors({});
       setSubmitted(null);
-      toast.success("Schema loaded");
+      toast.success(t('schemaLoaded'));
     } catch {
-      toast.error("Failed to parse JSON");
+      toast.error(t('failedToParse'));
     }
   };
 
@@ -48,9 +48,9 @@ export default function WatchPage() {
     setErrors(error);
     if (Object.keys(error).length === 0) {
       setSubmitted(values);
-      toast.success("Form submitted successfully");
+      toast.success(t('formSubmitted'));
     } else {
-      toast.error("Please fix validation errors");
+      toast.error(t('fixValidationErrors'));
     }
   };
 
@@ -59,18 +59,18 @@ export default function WatchPage() {
   return (
     <div className="space-y-6">
       <div className="flex items-center justify-between">
-        <h1 className="text-xl font-semibold">Check Schema Form</h1>
+        <h1 className="text-xl font-semibold">{t('checkSchemaForm')}</h1>
         <div className="flex gap-2">
-          <button className="border rounded px-3 py-1" onClick={onUploadClick}>Upload Schema</button>
+          <button className="border rounded px-3 py-1" onClick={onUploadClick}>{t('uploadSchema')}</button>
           <input ref={fileInputRef} type="file" accept="application/json" className="hidden" onChange={onFileSelected} />
           {schema && (
-            <button className="border rounded px-3 py-1" onClick={() => { setSchema(null); setValues({}); setErrors({}); setSubmitted(null); }}>Clear</button>
+            <button className="border rounded px-3 py-1" onClick={() => { setSchema(null); setValues({}); setErrors({}); setSubmitted(null); }}>{t('clear')}</button>
           )}
         </div>
       </div>
 
       {!schema && (
-        <p className="text-sm">Upload a schema JSON to render and test the form here.</p>
+        <p className="text-sm">{t('uploadSchemaDescription')}</p>
       )}
 
       {schema && (
@@ -78,7 +78,7 @@ export default function WatchPage() {
           <h2 className="font-medium">{schema.title}</h2>
           <div className="space-y-4">
             {schema.fields.length === 0 && (
-              <p className="text-sm">No fields in schema.</p>
+              <p className="text-sm">{t('noFieldsInSchema')}</p>
             )}
             {schema.fields
               .sort((a, b) => (a.rank || 0) - (b.rank || 0))
@@ -95,13 +95,13 @@ export default function WatchPage() {
               ))}
           </div>
           <div className="flex gap-2">
-            <button className="border rounded px-3 py-1" onClick={submit}>Submit</button>
-            <button className="border rounded px-3 py-1" onClick={() => { setValues({}); setErrors({}); setSubmitted(null); }}>Reset</button>
+            <button className="border rounded px-3 py-1" onClick={submit}>{t('submit')}</button>
+            <button className="border rounded px-3 py-1" onClick={() => { setValues({}); setErrors({}); setSubmitted(null); }}>{t('reset')}</button>
           </div>
 
           {result && (
             <section className="space-y-2">
-              <h3 className="font-medium">Submission Result (JSON)</h3>
+              <h3 className="font-medium">{t('submissionResult')}</h3>
               <pre className="text-sm bg-black/5 dark:bg-white/5 p-3 rounded overflow-x-auto"><code>{result}</code></pre>
             </section>
           )}

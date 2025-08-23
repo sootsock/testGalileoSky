@@ -2,9 +2,11 @@
 
 import { useEffect, useState } from "react";
 import { useTheme } from "@/components/ThemeProvider";
+import { useLanguage } from "@/components";
 
 export default function ThemeToggle() {
   const { theme, toggle } = useTheme();
+  const { t } = useLanguage();
   const [mounted, setMounted] = useState(false);
 
   useEffect(() => {
@@ -15,10 +17,10 @@ export default function ThemeToggle() {
     return (
       <button
         className="border rounded px-2 py-1 text-sm"
-        aria-label="Toggle theme"
-        title="Toggle theme"
+        aria-label={t('toggleTheme')}
+        title={t('toggleTheme')}
       >
-        Light
+        {t('light')}
       </button>
     );
   }
@@ -27,10 +29,10 @@ export default function ThemeToggle() {
     <button
       className="border rounded px-2 py-1 text-sm"
       onClick={toggle}
-      aria-label="Toggle theme"
-      title="Toggle theme"
+      aria-label={t('toggleTheme')}
+      title={t('toggleTheme')}
     >
-      {theme === "dark" ? "Light" : "Dark"}
+      {theme === "dark" ? t('light') : t('dark')}
     </button>
   );
 }

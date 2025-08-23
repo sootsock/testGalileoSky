@@ -2,15 +2,15 @@
 
 import { useEffect, useMemo, useRef, useState, ChangeEventHandler } from "react";
 import { FormField, FormSchema } from "@/lib/types";
-import FieldEditor from "@/components/FieldEditor";
+import { FieldEditor, useToast, useLanguage } from "@/components";
 import { loadSchema, saveSchema } from "@/lib/storage";
 import { validateSchema } from "@/lib/schema";
-import { useToast } from "@/components/ToastProvider";
 
 export default function BuilderPage() {
+  const { t } = useLanguage();
   const [schema, setSchema] = useState<FormSchema>(() => ({
     id: cryptoRandomId(),
-    title: "My Form",
+    title: t('myForm'),
     fields: [],
     version: 1,
   }));
@@ -52,9 +52,9 @@ export default function BuilderPage() {
 
   const onSave = () => {
     saveSchema(schema);
-    setMessage("Schema saved to localStorage");
+    setMessage(t('schemaSaved'));
     setError(null);
-    toast.success("Schema saved");
+    toast.success(t('schemaSaved'));
   };
 
   const onDownload = () => {
@@ -64,33 +64,31 @@ export default function BuilderPage() {
     const a = document.createElement("a");
     a.href = url;
     const safeTitle = schema.title.replace(/[^A-Za-z0-9_-]+/g, "_");
-    a.download = `${safeTitle || "form"}_${schema.id}.json`;
+    a.download = `${safeTitle || t('form')}_${schema.id}.json`;
     document.body.appendChild(a);
     a.click();
     a.remove();
     URL.revokeObjectURL(url);
-    toast.info("Schema downloaded");
+    toast.info(t('schemaDownloaded'));
   };
 
   const clearUI = () => {
-    setSchema({ id: cryptoRandomId(), title: "My Form", fields: [], version: 1 });
+    setSchema({ id: cryptoRandomId(), title: t('myForm'), fields: [], version: 1 });
     setMessage(null);
     setError(null);
   };
 
   const onClear = () => {
-    const ok = window.confirm(
-      "Are you sure you want to clear the current schema? Unsaved changes will be lost.",
-    );
+    const ok = window.confirm(t('clearConfirmation'));
     if (!ok) return;
     clearUI();
-    toast.info("Schema cleared");
+    toast.info(t('schemaCleared'));
   };
 
   const onDownloadAndClear = () => {
     onDownload();
     clearUI();
-    toast.success("Downloaded and cleared");
+    toast.success(t('downloadedAndCleared'));
   };
 
   const onUploadClick = () => {
@@ -108,18 +106,18 @@ export default function BuilderPage() {
       if (!result.valid) {
         setError(`Invalid schema: ${result.errors[0]}`);
         setMessage(null);
-        toast.error("Invalid schema file");
+        toast.error(t('invalidSchema'));
         return;
       }
       setSchema(parsed as FormSchema);
-      setMessage("Schema loaded from file");
+      setMessage(t('schemaLoaded'));
       setError(null);
-      toast.success("Schema uploaded");
+      toast.success(t('schemaUploaded'));
     } catch (err) {
-      setError("Failed to load schema file. Ensure it is valid JSON.");
+      setError(t('failedToLoad'));
       setMessage(null);
       console.error(err);
-      toast.error("Failed to load schema file");
+      toast.error(t('failedToLoad'));
     }
   };
 
@@ -127,11 +125,11 @@ export default function BuilderPage() {
 
   return (
     <div className="space-y-6">
-      <h1 className="text-xl font-semibold">Form Builder</h1>
+      <h1 className="text-xl font-semibold">{t('formBuilder')}</h1>
       <div className="space-y-3 sm:space-y-0 sm:grid sm:gap-1 sm:grid-cols-[auto_auto_1fr]">
         <div className="flex gap-3">
           <button className="border rounded px-3 py-1" onClick={() => addField("string")}>
-            + Add new field
+            {t('addNewField')}
           </button>
         </div>
         <div className="flex gap-3 sm:pl-6">
@@ -139,24 +137,24 @@ export default function BuilderPage() {
             className="border rounded px-2 py-1 bg-transparent w-full sm:w-40"
             value={schema.title}
             onChange={(e) => setSchema((s) => ({ ...s, title: e.target.value }))}
-            placeholder="Form title"
+            placeholder={t('formTitle')}
           />
         </div>
         <div className="flex flex-wrap gap-3 sm:justify-end">
           <button className="border rounded px-3 py-1" onClick={onSave}>
-            Save
+            {t('save')}
           </button>
           <button className="border rounded px-3 py-1" onClick={onDownload}>
-            Download
+            {t('download')}
           </button>
           <button className="border rounded px-3 py-1" onClick={onDownloadAndClear}>
-            Download & Clear
+            {t('downloadAndClear')}
           </button>
           <button className="border rounded px-3 py-1" onClick={onUploadClick}>
-            Upload
+            {t('upload')}
           </button>
           <button className="border rounded px-3 py-1" onClick={onClear}>
-            Clear
+            {t('clear')}
           </button>
           <input
             ref={fileInputRef}
@@ -175,7 +173,7 @@ export default function BuilderPage() {
       )}
 
       <div className="space-y-3">
-        {schema.fields.length === 0 && <p className="text-sm">No fields yet. Add one above.</p>}
+        {schema.fields.length === 0 && <p className="text-sm">{t('noFieldsYet')}</p>}
         {schema.fields.map((f) => (
           <FieldEditor
             key={f.id}
@@ -187,7 +185,7 @@ export default function BuilderPage() {
       </div>
 
       <section className="space-y-2">
-        <h2 className="font-medium">Schema JSON</h2>
+        <h2 className="font-medium">{t('schemaJson')}</h2>
         {mounted ? (
           <pre className="text-sm bg-black/5 dark:bg-white/5 p-3 rounded overflow-x-auto">
             <code>{exportJson}</code>
@@ -196,7 +194,7 @@ export default function BuilderPage() {
           <pre className="text-sm bg-black/5 dark:bg-white/5 p-3 rounded overflow-x-auto">
             <code>
               {
-                '{\n  "id": "loading...",\n  "title": "My Form",\n  "fields": [],\n  "version": 1\n}'
+                `{\n  "id": "${t('loading')}",\n  "title": "${t('myForm')}",\n  "fields": [],\n  "version": 1\n}`
               }
             </code>
           </pre>

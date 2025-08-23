@@ -2,6 +2,7 @@
 
 import { FormField } from "@/lib/types";
 import { useId } from "react";
+import { useLanguage } from "@/components";
 
 type FieldEditorProps = {
   field: FormField;
@@ -10,13 +11,14 @@ type FieldEditorProps = {
 };
 
 export default function FieldEditor({ field, onChange, onRemove }: FieldEditorProps) {
+  const { t } = useLanguage();
   const uid = useId();
 
   return (
     <div className="rounded border border-black/10 dark:border-white/10 p-4 space-y-3">
       <div className="grid grid-cols-1 sm:grid-cols-4 gap-3">
         <div>
-          <label htmlFor={`${uid}-name`} className="text-sm">Name</label>
+          <label htmlFor={`${uid}-name`} className="text-sm">{t('name')}</label>
           <input
             id={`${uid}-name`}
             className="mt-1 w-full border rounded px-2 py-1 bg-transparent"
@@ -26,17 +28,17 @@ export default function FieldEditor({ field, onChange, onRemove }: FieldEditorPr
           />
         </div>
         <div>
-          <label htmlFor={`${uid}-label`} className="text-sm">Label</label>
+          <label htmlFor={`${uid}-label`} className="text-sm">{t('label')}</label>
           <input
             id={`${uid}-label`}
             className="mt-1 w-full border rounded px-2 py-1 bg-transparent"
             value={field.label}
             onChange={(e) => onChange({ ...field, label: e.target.value })}
-            placeholder="Field label"
+            placeholder={t('fieldLabel')}
           />
         </div>
         <div>
-          <label htmlFor={`${uid}-type`} className="text-sm">Type</label>
+          <label htmlFor={`${uid}-type`} className="text-sm">{t('type')}</label>
           <select
             id={`${uid}-type`}
             className="mt-1 w-full border rounded px-2 py-1 bg-transparent"
@@ -50,14 +52,14 @@ export default function FieldEditor({ field, onChange, onRemove }: FieldEditorPr
               });
             }}
           >
-            <option value="integer">integer</option>
-            <option value="decimal">decimal</option>
-            <option value="string">string</option>
-            <option value="datetime">datetime</option>
+            <option value="integer">{t('integer')}</option>
+            <option value="decimal">{t('decimal')}</option>
+            <option value="string">{t('string')}</option>
+            <option value="datetime">{t('datetime')}</option>
           </select>
         </div>
         <div>
-          <label htmlFor={`${uid}-rank`} className="text-sm">Rank</label>
+          <label htmlFor={`${uid}-rank`} className="text-sm">{t('rank')}</label>
           <input
             id={`${uid}-rank`}
             className="mt-1 w-full border rounded px-2 py-1 bg-transparent"
@@ -76,7 +78,7 @@ export default function FieldEditor({ field, onChange, onRemove }: FieldEditorPr
       />
 
       <div className="flex justify-end">
-        <button className="text-red-600 text-sm hover:underline" onClick={onRemove}>Remove field</button>
+        <button className="text-red-600 text-sm hover:underline" onClick={onRemove}>{t('removeField')}</button>
       </div>
     </div>
   );
@@ -98,13 +100,15 @@ type VProps = {
 };
 
 function ValidationEditor({ type, validation, onChange }: VProps) {
+  const { t } = useLanguage();
+  
   if (type === "integer") {
     const rules = validation.type === "integer" ? validation.rules : { required: false };
     return (
       <div className="grid grid-cols-2 sm:grid-cols-4 gap-3">
-        <Checkbox label="Required" checked={!!rules.required} onChange={(b) => onChange({ type: "integer", rules: { ...rules, required: b } })} />
-        <NumberInput label="Min" value={rules.min ?? ""} onChange={(v) => onChange({ type: "integer", rules: { ...rules, min: parseOptionalNumber(v) } })} />
-        <NumberInput label="Max" value={rules.max ?? ""} onChange={(v) => onChange({ type: "integer", rules: { ...rules, max: parseOptionalNumber(v) } })} />
+        <Checkbox label={t('required')} checked={!!rules.required} onChange={(b) => onChange({ type: "integer", rules: { ...rules, required: b } })} />
+        <NumberInput label={t('min')} value={rules.min ?? ""} onChange={(v) => onChange({ type: "integer", rules: { ...rules, min: parseOptionalNumber(v) } })} />
+        <NumberInput label={t('max')} value={rules.max ?? ""} onChange={(v) => onChange({ type: "integer", rules: { ...rules, max: parseOptionalNumber(v) } })} />
       </div>
     );
   }
@@ -112,10 +116,10 @@ function ValidationEditor({ type, validation, onChange }: VProps) {
     const rules = validation.type === "decimal" ? validation.rules : { required: false, decimalPlaces: 2 };
     return (
       <div className="grid grid-cols-2 sm:grid-cols-4 gap-3">
-        <Checkbox label="Required" checked={!!rules.required} onChange={(b) => onChange({ type: "decimal", rules: { ...rules, required: b } })} />
-        <NumberInput label="Min" value={rules.min ?? ""} onChange={(v) => onChange({ type: "decimal", rules: { ...rules, min: parseOptionalNumber(v) } })} />
-        <NumberInput label="Max" value={rules.max ?? ""} onChange={(v) => onChange({ type: "decimal", rules: { ...rules, max: parseOptionalNumber(v) } })} />
-        <NumberInput label="Decimal places" value={rules.decimalPlaces ?? ""} onChange={(v) => onChange({ type: "decimal", rules: { ...rules, decimalPlaces: parseOptionalInteger(v) } })} />
+        <Checkbox label={t('required')} checked={!!rules.required} onChange={(b) => onChange({ type: "decimal", rules: { ...rules, required: b } })} />
+        <NumberInput label={t('min')} value={rules.min ?? ""} onChange={(v) => onChange({ type: "decimal", rules: { ...rules, min: parseOptionalNumber(v) } })} />
+        <NumberInput label={t('max')} value={rules.max ?? ""} onChange={(v) => onChange({ type: "decimal", rules: { ...rules, max: parseOptionalNumber(v) } })} />
+        <NumberInput label={t('decimalPlaces')} value={rules.decimalPlaces ?? ""} onChange={(v) => onChange({ type: "decimal", rules: { ...rules, decimalPlaces: parseOptionalInteger(v) } })} />
       </div>
     );
   }
@@ -123,11 +127,11 @@ function ValidationEditor({ type, validation, onChange }: VProps) {
     const rules = validation.type === "string" ? validation.rules : { required: false };
     return (
       <div className="grid grid-cols-2 sm:grid-cols-4 gap-3">
-        <Checkbox label="Required" checked={!!rules.required} onChange={(b) => onChange({ type: "string", rules: { ...rules, required: b } })} />
-        <NumberInput label="Min length" value={rules.minLength ?? ""} onChange={(v) => onChange({ type: "string", rules: { ...rules, minLength: parseOptionalInteger(v) } })} />
-        <NumberInput label="Max length" value={rules.maxLength ?? ""} onChange={(v) => onChange({ type: "string", rules: { ...rules, maxLength: parseOptionalInteger(v) } })} />
+        <Checkbox label={t('required')} checked={!!rules.required} onChange={(b) => onChange({ type: "string", rules: { ...rules, required: b } })} />
+        <NumberInput label={t('minLength')} value={rules.minLength ?? ""} onChange={(v) => onChange({ type: "string", rules: { ...rules, minLength: parseOptionalInteger(v) } })} />
+        <NumberInput label={t('maxLength')} value={rules.maxLength ?? ""} onChange={(v) => onChange({ type: "string", rules: { ...rules, maxLength: parseOptionalInteger(v) } })} />
         <div>
-          <label className="text-sm">Pattern (RegExp)</label>
+          <label className="text-sm">{t('pattern')}</label>
           <input className="mt-1 w-full border rounded px-2 py-1 bg-transparent" value={rules.pattern ?? ""} onChange={(e) => onChange({ type: "string", rules: { ...rules, pattern: e.target.value || undefined } })} />
         </div>
       </div>
@@ -136,13 +140,13 @@ function ValidationEditor({ type, validation, onChange }: VProps) {
   const rules = validation.type === "datetime" ? validation.rules : { required: false };
   return (
     <div className="grid grid-cols-2 sm:grid-cols-4 gap-3">
-      <Checkbox label="Required" checked={!!rules.required} onChange={(b) => onChange({ type: "datetime", rules: { ...rules, required: b } })} />
+      <Checkbox label={t('required')} checked={!!rules.required} onChange={(b) => onChange({ type: "datetime", rules: { ...rules, required: b } })} />
       <div>
-        <label className="text-sm">Min</label>
+        <label className="text-sm">{t('min')}</label>
         <input type="datetime-local" className="mt-1 w-full border rounded px-2 py-1 bg-transparent" value={rules.min ?? ""} onChange={(e) => onChange({ type: "datetime", rules: { ...rules, min: e.target.value || undefined } })} />
       </div>
       <div>
-        <label className="text-sm">Max</label>
+        <label className="text-sm">{t('max')}</label>
         <input type="datetime-local" className="mt-1 w-full border rounded px-2 py-1 bg-transparent" value={rules.max ?? ""} onChange={(e) => onChange({ type: "datetime", rules: { ...rules, max: e.target.value || undefined } })} />
       </div>
     </div>
