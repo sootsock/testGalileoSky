@@ -44,6 +44,9 @@ export function validateSchema(schema: unknown): SchemaValidationResult {
       if (!isFieldType(field.type))
         errors.push(`${path}.type must be one of integer|decimal|string|datetime`);
 
+      if (typeof field.rank !== "number" || !Number.isInteger(field.rank) || field.rank < 0)
+        errors.push(`${path}.rank must be a non-negative integer`);
+
       if (!field.validation || typeof field.validation !== "object") {
         errors.push(`${path}.validation must be an object`);
       } else {

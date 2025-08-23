@@ -14,7 +14,7 @@ export default function FieldEditor({ field, onChange, onRemove }: FieldEditorPr
 
   return (
     <div className="rounded border border-black/10 dark:border-white/10 p-4 space-y-3">
-      <div className="grid grid-cols-1 sm:grid-cols-3 gap-3">
+      <div className="grid grid-cols-1 sm:grid-cols-4 gap-3">
         <div>
           <label htmlFor={`${uid}-name`} className="text-sm">Name</label>
           <input
@@ -56,6 +56,17 @@ export default function FieldEditor({ field, onChange, onRemove }: FieldEditorPr
             <option value="datetime">datetime</option>
           </select>
         </div>
+        <div>
+          <label htmlFor={`${uid}-rank`} className="text-sm">Rank</label>
+          <input
+            id={`${uid}-rank`}
+            className="mt-1 w-full border rounded px-2 py-1 bg-transparent"
+            type="number"
+            value={field.rank}
+            onChange={(e) => onChange({ ...field, rank: parseInt(e.target.value) || 0 })}
+            placeholder="0"
+          />
+        </div>
       </div>
 
       <ValidationEditor
@@ -65,7 +76,7 @@ export default function FieldEditor({ field, onChange, onRemove }: FieldEditorPr
       />
 
       <div className="flex justify-end">
-        <button className="text-red-600 text-sm hover:underline" onClick={onRemove}>Remove</button>
+        <button className="text-red-600 text-sm hover:underline" onClick={onRemove}>Remove field</button>
       </div>
     </div>
   );

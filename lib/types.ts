@@ -38,6 +38,7 @@ export interface FormField {
   label: string;
   type: FieldType;
   validation: FieldValidation;
+  rank: number;
 }
 
 export interface FormSchema {

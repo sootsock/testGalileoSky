@@ -80,17 +80,19 @@ export default function WatchPage() {
             {schema.fields.length === 0 && (
               <p className="text-sm">No fields in schema.</p>
             )}
-            {schema.fields.map((field) => (
-              <DynamicField
-                key={field.id}
-                field={field}
-                value={values[field.id] ?? ""}
-                error={errors[field.id]}
-                onChange={(v) => {
-                  setValues((s) => ({ ...s, [field.id]: v }));
-                }}
-              />
-            ))}
+            {schema.fields
+              .sort((a, b) => (a.rank || 0) - (b.rank || 0))
+              .map((field) => (
+                <DynamicField
+                  key={field.id}
+                  field={field}
+                  value={values[field.id] ?? ""}
+                  error={errors[field.id]}
+                  onChange={(v) => {
+                    setValues((s) => ({ ...s, [field.id]: v }));
+                  }}
+                />
+              ))}
           </div>
           <div className="flex gap-2">
             <button className="border rounded px-3 py-1" onClick={submit}>Submit</button>

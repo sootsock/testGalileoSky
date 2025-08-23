@@ -37,6 +37,7 @@ export default function BuilderPage() {
       label: `Field ${schema.fields.length + 1}`,
       type,
       validation: defaultValidation(type),
+      rank: schema.fields.length,
     };
     setSchema((s) => ({ ...s, fields: [...s.fields, newField] }));
   };
