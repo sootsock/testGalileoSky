@@ -8,7 +8,12 @@ import { validateSchema } from "@/lib/schema";
 import { useToast } from "@/components/ToastProvider";
 
 export default function BuilderPage() {
-  const [schema, setSchema] = useState<FormSchema>(() => ({ id: cryptoRandomId(), title: "My Form", fields: [], version: 1 }));
+  const [schema, setSchema] = useState<FormSchema>(() => ({
+    id: cryptoRandomId(),
+    title: "My Form",
+    fields: [],
+    version: 1,
+  }));
   const [message, setMessage] = useState<string | null>(null);
   const [error, setError] = useState<string | null>(null);
   const [mounted, setMounted] = useState(false);
@@ -73,7 +78,9 @@ export default function BuilderPage() {
   };
 
   const onClear = () => {
-    const ok = window.confirm("Are you sure you want to clear the current schema? Unsaved changes will be lost.");
+    const ok = window.confirm(
+      "Are you sure you want to clear the current schema? Unsaved changes will be lost.",
+    );
     if (!ok) return;
     clearUI();
     toast.info("Schema cleared");
@@ -120,23 +127,43 @@ export default function BuilderPage() {
   return (
     <div className="space-y-6">
       <h1 className="text-xl font-semibold">Form Builder</h1>
-      <div className="grid gap-3 sm:grid-cols-2">
-        <div className="flex gap-2">
-          <button className="border rounded px-3 py-1" onClick={() => addField("string")}>Add field</button>
+      <div className="space-y-3 sm:space-y-0 sm:grid sm:gap-1 sm:grid-cols-[auto_auto_1fr]">
+        <div className="flex gap-3">
+          <button className="border rounded px-3 py-1" onClick={() => addField("string")}>
+            + Add new field
+          </button>
         </div>
-        <div className="flex gap-2 sm:justify-end">
+        <div className="flex gap-3 sm:pl-6">
           <input
-            className="border rounded px-2 py-1 bg-transparent w-60"
+            className="border rounded px-2 py-1 bg-transparent w-full sm:w-40"
             value={schema.title}
             onChange={(e) => setSchema((s) => ({ ...s, title: e.target.value }))}
             placeholder="Form title"
           />
-          <button className="border rounded px-3 py-1" onClick={onSave}>Save</button>
-          <button className="border rounded px-3 py-1" onClick={onDownload}>Download</button>
-          <button className="border rounded px-3 py-1" onClick={onDownloadAndClear}>Download & Clear</button>
-          <button className="border rounded px-3 py-1" onClick={onUploadClick}>Upload</button>
-          <button className="border rounded px-3 py-1" onClick={onClear}>Clear</button>
-          <input ref={fileInputRef} type="file" accept="application/json" className="hidden" onChange={onFileSelected} />
+        </div>
+        <div className="flex flex-wrap gap-3 sm:justify-end">
+          <button className="border rounded px-3 py-1" onClick={onSave}>
+            Save
+          </button>
+          <button className="border rounded px-3 py-1" onClick={onDownload}>
+            Download
+          </button>
+          <button className="border rounded px-3 py-1" onClick={onDownloadAndClear}>
+            Download & Clear
+          </button>
+          <button className="border rounded px-3 py-1" onClick={onUploadClick}>
+            Upload
+          </button>
+          <button className="border rounded px-3 py-1" onClick={onClear}>
+            Clear
+          </button>
+          <input
+            ref={fileInputRef}
+            type="file"
+            accept="application/json"
+            className="hidden"
+            onChange={onFileSelected}
+          />
         </div>
       </div>
 
@@ -147,20 +174,31 @@ export default function BuilderPage() {
       )}
 
       <div className="space-y-3">
-        {schema.fields.length === 0 && (
-          <p className="text-sm">No fields yet. Add one above.</p>
-        )}
+        {schema.fields.length === 0 && <p className="text-sm">No fields yet. Add one above.</p>}
         {schema.fields.map((f) => (
-          <FieldEditor key={f.id} field={f} onChange={(ff) => updateField(f.id, ff)} onRemove={() => removeField(f.id)} />
+          <FieldEditor
+            key={f.id}
+            field={f}
+            onChange={(ff) => updateField(f.id, ff)}
+            onRemove={() => removeField(f.id)}
+          />
         ))}
       </div>
 
       <section className="space-y-2">
         <h2 className="font-medium">Schema JSON</h2>
         {mounted ? (
-          <pre className="text-sm bg-black/5 dark:bg-white/5 p-3 rounded overflow-x-auto"><code>{exportJson}</code></pre>
+          <pre className="text-sm bg-black/5 dark:bg-white/5 p-3 rounded overflow-x-auto">
+            <code>{exportJson}</code>
+          </pre>
         ) : (
-          <pre className="text-sm bg-black/5 dark:bg-white/5 p-3 rounded overflow-x-auto"><code>{"{\n  \"id\": \"loading...\",\n  \"title\": \"My Form\",\n  \"fields\": [],\n  \"version\": 1\n}"}</code></pre>
+          <pre className="text-sm bg-black/5 dark:bg-white/5 p-3 rounded overflow-x-auto">
+            <code>
+              {
+                '{\n  "id": "loading...",\n  "title": "My Form",\n  "fields": [],\n  "version": 1\n}'
+              }
+            </code>
+          </pre>
         )}
       </section>
     </div>
@@ -170,13 +208,13 @@ export default function BuilderPage() {
 function defaultValidation(type: FormField["type"]): FormField["validation"] {
   switch (type) {
     case "string":
-      return {type: "string", rules: {required: false}};
+      return { type: "string", rules: { required: false } };
     case "integer":
-      return {type: "integer", rules: {required: false}};
+      return { type: "integer", rules: { required: false } };
     case "decimal":
-      return {type: "decimal", rules: {required: false, decimalPlaces: 2}};
+      return { type: "decimal", rules: { required: false, decimalPlaces: 2 } };
     default:
-      return {type: "datetime", rules: {required: false}}
+      return { type: "datetime", rules: { required: false } };
   }
 }
 
@@ -184,6 +222,3 @@ function cryptoRandomId(): string {
   if (typeof crypto !== "undefined" && "randomUUID" in crypto) return crypto.randomUUID();
   return Math.random().toString(36).slice(2);
 }
-
-
-
