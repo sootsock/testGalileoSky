@@ -31,11 +31,33 @@ function getInitialTheme(): Theme {
 }
 
 export default function ThemeProvider({ children }: { children: ReactNode }) {
-  const [theme, setThemeState] = useState<Theme>(getInitialTheme);
+  const [theme, setThemeState] = useState<Theme>(() => {
+    const initialTheme = getInitialTheme();
+    
+    // Set initial dark class if needed
+    if (typeof window !== "undefined") {
+      const root = document.documentElement;
+      if (initialTheme === "dark") {
+        root.classList.add("dark");
+      } else {
+        root.classList.remove("dark");
+      }
+    }
+    
+    return initialTheme;
+  });
 
   useEffect(() => {
     const root = document.documentElement;
     root.setAttribute("data-theme", theme);
+    
+    // Also add/remove dark class for Tailwind CSS
+    if (theme === "dark") {
+      root.classList.add("dark");
+    } else {
+      root.classList.remove("dark");
+    }
+    
     try { window.localStorage.setItem(STORAGE_KEY, theme); } catch {}
   }, [theme]);
 

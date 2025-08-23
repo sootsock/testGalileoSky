@@ -79,6 +79,11 @@ export const en = {
   form: "form",
   loading: "loading...",
   toggleTheme: "Toggle theme",
+  
+  // Settings
+  settings: "Settings",
+  changeLanguage: "Change Language",
+  changeTheme: "Change Theme",
 } as const;
 
 export type TranslationKey = keyof typeof en;

@@ -79,4 +79,9 @@ export const ru = {
   form: "форма",
   loading: "загрузка...",
   toggleTheme: "Переключить тему",
+  
+  // Settings
+  settings: "Настройки",
+  changeLanguage: "Изменить язык",
+  changeTheme: "Изменить тему",
 } as const;
